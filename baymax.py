@@ -7,6 +7,7 @@ import wolframalpha
 import webbrowser
 import wikipedia
 from datetime import datetime,date
+import json
 
 # Functions
 def listen():
@@ -30,7 +31,7 @@ def speak(string):
     engine.say(string)
     engine.runAndWait()
 
-def time():
+def timeNow():
     """
     Returns current time
     """
@@ -79,29 +80,37 @@ def onChrome(listenedWord):
 
 def userLogin():
     speak('Enter your Username below')
+    print("Enter your username here:",end="")
     username=input()
-    for creds in credentials:
-        for key,value in creds.items():
-            print(key)
-            if key == username:
-                speak(f"Hello {key}.Please Enter your password")
-                try:
-                    password=int(input())
-                    if password == value:
-                        speak('Credentials matched successfully!You can continue')
-                        return 1
-                    else:
-                        speak('Sorry! Credentials did not match')
-                        return 0
-                        break
-                except Exception as e:
-                    print('Password Can not be empty')
-            else:
-                speak("Sorry No username found")
-                speak("If you want to create a new account please")
-                while True:
-                    userLogin()
+    if username in parsedCred:
+        speak(f'Hello {username} ! Enter your password')
+        print("Enter your password here:",end="")
+        password=input()
+        if password==parsedCred[f"{username}"]:
+            speak(f"Welcome back!{username}")
+        else:
+            print("---INCORRECT PASSWORD---")
+            speak("sorry the password you entered is incorrect!please try again")
+            i=0
+            for i in range(0,2):
+                print("Enter your password here:",end="")
+                password=input()
+                if password==parsedCred[f"{username}"]:
+                    speak(f"Welcome back!{username}")
                     break
+                elif i==1:
+                    speak("Intruder Detected!Making a log of intruder login")
+                    print(f"Log made at {timeNow()}")
+                else:
+                    print("---INCORRECT PASSWORD---")
+                    speak("sorry the password you entered is incorrect!please try again")
+    elif username=="leave":
+        return 0
+    else:
+        speak("Sorry you are not in our data base,To continue using assistant,Create an account")
+        speak("by logging in as admin")
+        userLogin()
+
         
 # Paths 
 pathDict={
@@ -111,14 +120,96 @@ pathDict={
     "code":"C:/Users/anuku/AppData/Local/Programs/Microsoft VS Code/Code.exe"
     }
 
+# Credentials
+credentials='{"anukul":"333","admin":"1234"}'
+parsedCred=json.loads(credentials)
+loopCounter=0
+
 # Constants and Variables
 intro='Hey Beymax here!\n To use me as your assistant you have to login first.'
-credentials=[{'anukul':333},{'admin':123}]
+wdym="sorry sir I did not get you,can you please repeat"
+wdywmtd="What do you want me to do?"
+
+# Main function here
+def mainFunc():
+    if "open chrome" in query.lower():
+        openApp(pathDict['chrome'])
+        speak("Opened chrome successfully!")
+        time.sleep(10)
+    elif "open code editor" in query.lower():
+        openApp(pathDict['code'])
+        speak("Opened VS Code successfully!")
+        time.sleep(10)
+    elif "turn off" in query.lower():
+        speak("Turning off my brain,Take care Sir")
+        exit()
+    elif "open microsoft word" in query.lower():
+        openApp(pathDict['word'])
+        speak("Opened Microsoft word Successfully!")
+        time.sleep(10)
+    elif "open microsoft edge" in query.lower():
+        openApp(pathDict['edge'])
+        speak("Opened Microsoft edge Successfully!")
+        time.sleep(10)
+    elif "answer me" in query.lower():
+        speak("what do you want to ask me sir?")
+        question=listen()
 
 # Logic Starts Here
 if __name__=="__main__":
     # speak(intro)
-    check = userLogin()
-    while check:
-        speak("Hello Sir What do you want me to do?")
-        pass
+    # if userLogin()!=0:
+    #     speak(wdywmtd)
+        while True:
+            try:
+                query=listen()
+                print(query)
+                break
+            except Exception as e:
+                speak("Sir please repeat")
+        while True:
+            if loopCounter!=0:
+                speak("Is there anything more I can do for you?")
+                while True:
+                    try:
+                        listened_word=listen()
+                        print(listened_word)
+                        break
+                    except Exception as e:
+                        speak("Sir please repeat")
+                if listened_word.lower()=="yes":
+                    speak(wdywmtd)
+                    while True:
+                        try:
+                            query=listen()
+                            print(query)
+                            break
+                        except Exception as e:
+                            speak("Sir please repeat")
+                    mainFunc()
+                    loopCounter+=1
+                elif listened_word.lower()=="no":
+                    speak("Ok Sir May I sleep till then?")
+                    while True:
+                        try:
+                            query=listen()
+                            print(query)
+                            break
+                        except Exception as e:
+                            speak("Can you please repeat sir if i can sleep or not?")
+                    if "yes" in query.lower():
+                        speak("For how many seconds sir?")
+                        print("Enter the number of seconds you want me to sleep:")
+                        secs=int(input())
+                        speak(f"Ok sir sleeping for {secs} secondss")
+                        time.sleep(secs)
+                    elif listened_word.lower()=="no":
+                        speak("Ok sir")
+                    else:
+                        speak("Sorry I did not get you sir")
+                else:
+                        speak("Sorry I did not get you sir")
+            else:
+                mainFunc()
+                loopCounter+=1
+
