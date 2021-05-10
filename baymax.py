@@ -121,40 +121,6 @@ def userLogin():
         userLogin()
 
 
-def NoF():
-    speak("Ok Sir May I sleep till then?")
-    while True:
-        try:
-            query = listen()
-            print(query)
-            break
-        except Exception as e:
-            speak("Can you please repeat sir if i can sleep or not?")
-    if "yes" in query.lower():
-        speak("For how many seconds sir?")
-        print("Enter the number of seconds you want me to sleep:")
-        secs = int(input())
-        speak(f"Ok sir sleeping for {secs} secondss")
-        time.sleep(secs)
-    elif listened_word.lower() == "no":
-        speak("Ok sir")
-    else:
-        speak("Sorry I did not get you sir")
-
-
-def yesF():
-    speak(wdywmtd)
-    while True:
-        try:
-            query = listen()
-            print(query)
-            break
-        except Exception as e:
-            speak("Sir please repeat")
-    mainFunc()
-    loopCounter += 1
-
-
 # Paths
 pathDict = {
     "chrome": "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe",
@@ -180,43 +146,47 @@ def mainFunc():
     if "open chrome" in query.lower():
         openApp(pathDict['chrome'])
         speak("Opened chrome successfully!")
-        time.sleep(10)
+        # time.sleep(10)
     elif "open code editor" in query.lower():
         openApp(pathDict['code'])
         speak("Opened VS Code successfully!")
-        time.sleep(10)
+        # time.sleep(10)
     elif "turn off" in query.lower():
         speak("Turning off my brain,Take care Sir")
         exit()
     elif "open microsoft word" in query.lower():
         openApp(pathDict['word'])
         speak("Opened Microsoft word Successfully!")
-        time.sleep(10)
+        # time.sleep(10)
     elif "open microsoft edge" in query.lower():
         openApp(pathDict['edge'])
         speak("Opened Microsoft edge Successfully!")
-        time.sleep(10)
-    elif "answer me" in query.lower():
+        # time.sleep(10)
+    elif "answer my question" in query.lower():
         speak("Shoot me with your question")
-        while True:
-            try:
-                question = listen()
-                print(question)
-                break
-            except Exception as e:
-                speak('Please say again')
-        while True:
-            try:
-                answer = wQue(question)
-                print(answer)
-                speak(answer)
-                time.sleep(15)
-                break
-            except Exception as e:
-                speak("Searching answer on web")
-                onChrome(question)
-                break
-        time.sleep(15)
+        speak("How many questions you want me to answer?")
+        num=int(input())
+        for num in range(num):
+                speak("Ask me your question")
+                while True:
+                    try:
+                        question = listen()
+                        print(question)
+                        break
+                    except Exception as e:
+                        speak('Please say again')
+                while True:
+                    try:
+                        answer = wQue(question)
+                        print(answer)
+                        speak(answer)
+                        time.sleep(15)
+                        break
+                    except Exception as e:
+                        speak("Searching answer on web")
+                        onChrome(question)
+                        break
+                time.sleep(5)
     elif "wikipedia" in query.lower():
         list1 = query.lower()
         list1 = list1.split(" ")
@@ -232,25 +202,25 @@ def mainFunc():
                 print(results)
                 speak("According to Wikipedia")
                 speak(results)
-                time.sleep(10)
+                # time.sleep(10)
                 break
             except Exception as e:
                 speak(f"No results found for {fword} on wikipedia")
                 break
     elif "time now" in query.lower():
         speak(timeNow())
-        time.sleep(5)
+        # time.sleep(5)
     else:
         speak("No such command for me!Please try again")
         speak("I am listening you sir")
-        mainFunc()
+        
 
 
 # Logic Starts Here
 if __name__ == "__main__":
     speak(intro)
-    if userLogin()!=0:
-        speak(wdywmtd)
+    # if userLogin()!=0:
+        # speak(wdywmtd)
     while True:
         try:
             query = listen()
@@ -267,12 +237,39 @@ if __name__ == "__main__":
                     print(listened_word)
                     break
                 except Exception as e:
-                    listened_word="None"
-                    break
-            if listened_word == "no":
-                NoF()
-            else:
-                yesF()
+                    speak("Please say it again Sir")
+            if "right" in listened_word.lower():
+                speak(wdywmtd)
+                while True:
+                    try:
+                        query = listen()
+                        print(query)
+                        break
+                    except Exception as e:
+                        speak("Sir please repeat")
+                print(query)
+                mainFunc()
+                loopCounter += 1
+            elif "no" in listened_word.lower():
+                speak("Ok Sir May I sleep till then?")
+                while True:
+                    try:
+                        query = listen()
+                        print(query)
+                        break
+                    except Exception as e:
+                        speak("Can you please repeat sir if i can sleep or not?")
+                if "yes" in query.lower():
+                    speak("For how many seconds sir?")
+                    print("Enter the number of seconds you want me to sleep:")
+                    secs = int(input())
+                    speak(f"Ok sir sleeping for {secs} secondss")
+                    time.sleep(secs)
+                elif listened_word.lower() == "no":
+                    speak("Ok sir")
+                else:
+                    speak("Sorry I did not get you sir")
+
         else:
             mainFunc()
             loopCounter += 1
